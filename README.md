@@ -75,3 +75,8 @@ value.
 13. Look for an alternative method to store the salt.
 14. Add an "include title" checkbox option in the settings.
 15. Add more exceptions to the logging.
+
+## Attributions
+* Tray Icon Image (Name: TV Screen Share Icon) by Bastien Delmare from
+the Noun Project. The image was resized.
+Link: https://thenounproject.com/search/?q=screen%20share&i=986547
