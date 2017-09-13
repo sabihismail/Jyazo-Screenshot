@@ -13,7 +13,7 @@ public class Constants {
      */
     public static final String PROGRAM_NAME = "Jyazo";
     public static final String CREATOR = "ArkaPrime";
-    public static final String GITHUB = "http://github.com/sabihismail/Jyazo/";
+    public static final String GITHUB = "https://github.com/sabihismail/Jyazo-Screenshot";
 
     /**
      * The save directory for all files created by the program.
