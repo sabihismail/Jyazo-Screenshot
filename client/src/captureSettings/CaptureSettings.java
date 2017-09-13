@@ -139,7 +139,8 @@ public class CaptureSettings {
         Button gifShortcutClear = new Button("Clear GIF Shortcut");
         gifShortcutClear.setDisable(!enableGIFShortcut.isSelected());
         gifShortcutClear.disableProperty().bind(Bindings.createBooleanBinding(() ->
-                !(enableGIF.selectedProperty().get()), enableGIF.selectedProperty()));
+                !(enableGIF.selectedProperty().get() && enableGIFShortcut.selectedProperty().get()),
+                enableGIF.selectedProperty(), enableGIFShortcut.selectedProperty()));
 
         TextField gifShortcut = new TextField();
         gifShortcut.setEditable(false);
@@ -148,16 +149,15 @@ public class CaptureSettings {
         gifShortcut.disableProperty().bind(Bindings.createBooleanBinding(() ->
                 !(enableGIF.selectedProperty().get()), enableGIF.selectedProperty()));
 
-        enableGIFShortcut.setText("Do you want to be able to start " + Constants.PROGRAM_NAME + "'s GIF Screen capture with a shortcut?");
+        enableGIFShortcut.setText("Do you want to be able to start " + Constants.PROGRAM_NAME + "'s GIF Screen " +
+                "capture with a shortcut?");
         enableGIFShortcut.setWrapText(true);
         enableGIFShortcut.setSelected(settings.isEnableGIFShortcut());
         enableGIFShortcut.setOnAction(e -> {
             if (enableGIFShortcut.isSelected()) {
                 gifShortcut.setText(settings.getStringFromKeycodes(keys2));
-                gifShortcutClear.setDisable(false);
             } else {
                 gifShortcut.setText("");
-                gifShortcutClear.setDisable(true);
             }
         });
 
