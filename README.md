@@ -17,7 +17,9 @@ variables to match your database information.
 The variable defined as `URL_PATH` is the folder that the images will
 be saved in. This folder will also contain the `index.php` script. By
 default, this will be `ss/`. Please note, if you change this value in
-the script, you **MUST** change the folder name as well.
+the script, you **MUST** change the folder name as well. You will also
+have to change the `/ss/` in the .htaccess on this line:
+`RewriteRule ^(.*)$ /ss/index.php?path=$1 [NC,L,QSA]`.
 
 For the `UPLOAD_PASSWORD` and `SALT`, it is recommended you
 [generate a random password](https://passwordsgenerator.net/).
