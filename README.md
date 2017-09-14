@@ -77,6 +77,6 @@ value.
 * Add more exceptions to the logging.
 
 ## Attributions
-* Tray Icon Image (Name: TV Screen Share Icon) by Bastien Delmare from
-the Noun Project. The image was resized.
-Link: https://thenounproject.com/search/?q=screen%20share&i=986547
+* Tray Icon Image (Name: Share Screen) by Chinnaking from the Noun 
+Project. The image was resized, edited, and the colours were changed.
+Link: https://thenounproject.com/search/?q=screen%20share&i=1050685
