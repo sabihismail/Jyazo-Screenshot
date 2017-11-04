@@ -38,11 +38,12 @@ Ensure that the names of the JAR files match the value of the variable
 `PROGRAM_NAME` in the class `tools.Constants`. The
 `tray.CreateTrayIcon` JAR should be named ``{{PROGRAM_NAME}}.jar`` and
 the compiled GIF jar should be named `{{PROGRAM_NAME}}GIF.jar`. An
-example of both compiled JARs are located in the `compiled` folder.
+example of both compiled JARs are located in the 
+[releases section](/releases/latest).
 
 #### No Compile
 
-Download both JAR files from the `compiled` folder.
+Download both JAR files from the [releases section](/releases/latest).
 
 ## Configure Settings
 Open the JAR with no GIF in the name. An icon should appear in the
