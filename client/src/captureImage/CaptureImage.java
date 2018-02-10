@@ -52,13 +52,14 @@ public class CaptureImage extends JFrame {
      * @param settings This contains the user settings that is passed in from {@link #createInstance(Settings, Config)}.
      * @param config   This contains the encrypted configuration data that is passed in from
      *                 {@link #createInstance(Settings, Config)}.
+     * @param bounds   Bounds of the specified window.
      */
-    public CaptureImage(Settings settings, Config config) {
+    private CaptureImage(Settings settings, Config config, Rectangle bounds) {
         this.settings = settings;
         this.config = config;
 
-        width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        this.width = (int) bounds.getWidth();
+        this.height = (int) bounds.getHeight();
 
         setSize(width, height);
         setType(Type.UTILITY);
@@ -66,6 +67,7 @@ public class CaptureImage extends JFrame {
         setAlwaysOnTop(true);
         setBackground(new java.awt.Color(0, 0, 0, 0));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLocation((int) bounds.getX(), (int) bounds.getY());
 
         fxPanel = new JFXPanel();
         generateScene();
@@ -252,13 +254,35 @@ public class CaptureImage extends JFrame {
      * This method is used to maintain method naming consistency between the creation of {@link CaptureImage} and
      * {@link captureGIF.CaptureGIF}.
      *
+     * As of 1.1, also calculates the size of the screen based on the amount of monitors on the client.
+     *
      * @param settings This contains the user settings that is passed in from {@link tray.CreateTrayIcon} and is
-     *                 immediately passed into {@link CaptureImage#CaptureImage(Settings, Config)}.
+     *                 immediately passed into {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
      * @param config   This contains the encrypted configuration data that is passed in from
      *                 {@link tray.CreateTrayIcon} and is immediately passed into
-     *                 {@link CaptureImage#CaptureImage(Settings, Config)}.
+     *                 {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
      */
     public static void createInstance(Settings settings, Config config) {
-        new CaptureImage(settings, config);
+        int x = 0;
+        int y = 0;
+        int width = 0;
+        int height = 0;
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        for (GraphicsDevice device : ge.getScreenDevices()) {
+            Rectangle bounds = device.getDefaultConfiguration().getBounds();
+
+            width += bounds.getWidth();
+            height += bounds.getWidth();
+
+            x = (int) Math.min(x, bounds.getX());
+            y = (int) Math.min(y, bounds.getY());
+        }
+
+        new CaptureImage(settings, config, new Rectangle(x, y, width, height));
+    }
+
+    public static void main(String[] args) {
+        createInstance(new Settings(), new Config());
     }
 }
