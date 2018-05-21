@@ -66,8 +66,6 @@ public class CreateTrayIcon extends Application {
 
         GlobalKeyListener.beginListening(settingsClass, config);
 
-        captureImage = new JMenuItem("Capture Image (" +
-                settingsClass.getCaptureImageShortcut().replaceAll(" ", " + ") + ")");
         captureGIF = new JMenuItem("Capture GIF (" +
                 settingsClass.getCaptureGIFShortcut().replaceAll(" ", " + ") + ")");
 

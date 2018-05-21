@@ -1,7 +1,6 @@
 package captureImage;
 
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -11,12 +10,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import settings.Config;
 import settings.Settings;
 import upload.Upload;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
@@ -33,8 +33,8 @@ import java.io.IOException;
  *
  * @since 1.0
  */
-public class CaptureImage extends JFrame {
-    private JFXPanel fxPanel;
+public class CaptureImage {
+    private Stage stage;
     private GraphicsContext gc;
     private int width, height;
 
@@ -61,25 +61,18 @@ public class CaptureImage extends JFrame {
         this.width = (int) bounds.getWidth();
         this.height = (int) bounds.getHeight();
 
-        setSize(width, height);
-        setType(Type.UTILITY);
-        setUndecorated(true);
-        setAlwaysOnTop(true);
-        setBackground(new java.awt.Color(0, 0, 0, 0));
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setLocation((int) bounds.getX(), (int) bounds.getY());
-
-        fxPanel = new JFXPanel();
-        generateScene();
-        getContentPane().add(fxPanel);
-
-        setVisible(true);
+        Platform.runLater(this::generateScene);
     }
 
     /**
      * Creates {@link Canvas} and enables drawing of capture region.
      */
     private void generateScene() {
+        stage = new Stage();
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
+        stage.initStyle(StageStyle.TRANSPARENT);
+
         Canvas canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
 
@@ -87,13 +80,14 @@ public class CaptureImage extends JFrame {
 
         Pane root = new Pane();
         root.getChildren().add(canvas);
+
         Scene fxScene = new Scene(root);
         fxScene.setFill(Color.TRANSPARENT);
         fxScene.setCursor(Cursor.CROSSHAIR);
 
         fxScene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
-                dispose();
+                stage.close();
             }
         });
 
@@ -129,7 +123,9 @@ public class CaptureImage extends JFrame {
             }
         });
 
-        fxPanel.setScene(fxScene);
+        stage.setScene(fxScene);
+
+        stage.showAndWait();
     }
 
     /**
@@ -142,7 +138,7 @@ public class CaptureImage extends JFrame {
      * {@link Settings#saveDirectory}.
      * <p>
      * The image will then be uploaded to the url at {@link Config#server} and the {@link CaptureImage} instance will
-     * be disposed using {@link #dispose()}.
+     * be disposed using {@link Stage#close()}.
      */
     private void saveImageAndUpload() {
         double minX = 0, minY = 0;
@@ -186,7 +182,7 @@ public class CaptureImage extends JFrame {
 
         Upload.uploadFile(tempFile, settings, config);
 
-        dispose();
+        Platform.runLater(() -> stage.close());
     }
 
     /**
@@ -255,14 +251,20 @@ public class CaptureImage extends JFrame {
      * {@link captureGIF.CaptureGIF}.
      *
      * As of 1.1, also calculates the size of the screen based on the amount of monitors on the client.
-     *
-     * @param settings This contains the user settings that is passed in from {@link tray.CreateTrayIcon} and is
+     *  @param settings This contains the user settings that is passed in from {@link tray.CreateTrayIcon} and is
      *                 immediately passed into {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
      * @param config   This contains the encrypted configuration data that is passed in from
      *                 {@link tray.CreateTrayIcon} and is immediately passed into
      *                 {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
      */
     public static void createInstance(Settings settings, Config config) {
+        int w = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        int h = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+
+        Rectangle bounds = new Rectangle(w, h);
+
+        new CaptureImage(settings, config, bounds);
+        /*
         int x = 0;
         int y = 0;
         int width = 0;
@@ -280,6 +282,7 @@ public class CaptureImage extends JFrame {
         }
 
         new CaptureImage(settings, config, new Rectangle(x, y, width, height));
+        */
     }
 
     public static void main(String[] args) {
