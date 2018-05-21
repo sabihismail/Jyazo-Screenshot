@@ -55,30 +55,30 @@ located. The server password below should match the global variable
 `UPLOAD_PASSWORD` in the `upload_image.php` file.
 
 ## TODO (in no particular order):
-- [] Create a more efficient GIF capture. Possibly experiment with JNA to 
+- [ ] Create a more efficient GIF capture. Possibly experiment with JNA to 
 do this.
-- [] Change how capture works by creating one middleman overlay class
+- [ ] Change how capture works by creating one middleman overlay class
 that passes information to both the CaptureImage and the CaptureGIF
 class. This would cut down on some repeated code.
 - [x] Experiment with smoother canvas drawing as the current method
 (JavaFX Canvas embedded in Swing component is not very smooth).
-- [] Allow for any text to be uploaded to the website instead of having 
+- [ ] Allow for any text to be uploaded to the website instead of having 
 to replace all non ASCII characters before sending data.
-- [] Create a fancier index.php page for screenshot viewing.
-- [] Send region capture data to CaptureGIF so it only creates the GIF and
+- [ ] Create a fancier index.php page for screenshot viewing.
+- [ ] Send region capture data to CaptureGIF so it only creates the GIF and
 then saves the image. Will possibly use Remote Method Invocation for
 this.
-- [] Move Enable GIF from Config to Settings.
-- [] Give the option to GIF upload to personal server rather than Gfycat.
-- [] If upload fails, store image and queue upload at different time.
-- [] For the overlay, change the startX, endX, startY, and endY variables
+- [ ] Move Enable GIF from Config to Settings.
+- [ ] Give the option to GIF upload to personal server rather than Gfycat.
+- [ ] If upload fails, store image and queue upload at different time.
+- [ ] For the overlay, change the startX, endX, startY, and endY variables
 rather than doing a check of whether startX or endX is the smaller
 value.
-- [] Align image in center and resize larger images for index.php.
-- [] Allow for Gfycat GIF embed in index.php page.
-- [] Look for an alternative method to store the salt.
-- [] Add an "include title" checkbox option in the settings.
-- [] Add more exceptions to the logging.
+- [ ] Align image in center and resize larger images for index.php.
+- [ ] Allow for Gfycat GIF embed in index.php page.
+- [ ] Look for an alternative method to store the salt.
+- [ ] Add an "include title" checkbox option in the settings.
+- [ ] Add more exceptions to the logging.
 
 ## Attributions
 * Tray Icon Image (Name: Share Screen) by Chinnaking from the Noun 
