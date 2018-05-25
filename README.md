@@ -30,34 +30,30 @@ image with the POST name `uploaded_image`.
 
 #### Manually Compile (skip to `No Compile` if you will download the JAR files instead)
 
-To configure the upload URL and the password, either compile two JAR
-files yourself: one with the main class as `tray.CreateTrayIcon`, and
-one with the main class as `captureGIF.CaptureGIF`.
+To configure the upload URL and the password, either compile the JAR
+file yourself with the main class as `tray.CreateTrayIcon`.
 
 Ensure that the names of the JAR files match the value of the variable
-`PROGRAM_NAME` in the class `tools.Constants`. The
-`tray.CreateTrayIcon` JAR should be named ``{{PROGRAM_NAME}}.jar`` and
-the compiled GIF jar should be named `{{PROGRAM_NAME}}GIF.jar`. An
-example of both compiled JARs are located in the 
+`PROGRAM_NAME` in the class `tools.Constants`. The JAR should be named
+``{{PROGRAM_NAME}}.jar``. An example of both compiled JARs are located 
+in the
 [releases section](https://github.com/sabihismail/Jyazo-Screenshot/releases/latest).
 
 #### No Compile
 
-Download both JAR files from the 
+Download the JAR file from the 
 [releases section](https://github.com/sabihismail/Jyazo-Screenshot/releases/latest).
 
 ## Configure Settings
-Open the JAR with no GIF in the name. An icon should appear in the
-tray. Right click this icon and click `Settings`. Click
-`Advanced Settings` and then input the URL of where your
-`upload_image.php` script or equivalent direct URL is
-located. The server password below should match the global variable
-`UPLOAD_PASSWORD` in the `upload_image.php` file.
+Open the JAR. An icon should appear in the tray. Right click this 
+icon and click `Settings`. Click `Advanced Settings` and then input
+the URL of where your `upload_image.php` script or equivalent direct 
+URL is located. The server password below should match the global 
+variable `UPLOAD_PASSWORD` in the `upload_image.php` file.
 
 ## TODO (in no particular order):
-- [ ] Create a more efficient GIF capture. Possibly experiment with JNA to 
-do this.
-- [ ] Change how capture works by creating one middleman overlay class
+- [x] Create a more efficient GIF capture.
+- [x] Change how capture works by creating one middleman overlay class
 that passes information to both the CaptureImage and the CaptureGIF
 class. This would cut down on some repeated code.
 - [x] Experiment with smoother canvas drawing as the current method
@@ -65,10 +61,9 @@ class. This would cut down on some repeated code.
 - [ ] Allow for any text to be uploaded to the website instead of having 
 to replace all non ASCII characters before sending data.
 - [ ] Create a fancier index.php page for screenshot viewing.
-- [ ] Send region capture data to CaptureGIF so it only creates the GIF and
-then saves the image. Will possibly use Remote Method Invocation for
-this.
-- [ ] Move Enable GIF from Config to Settings.
+- [x] Send region capture data to CaptureGIF so it only creates the GIF and
+then saves the image.
+- [x] Move Enable GIF from Config to Settings.
 - [ ] Give the option to GIF upload to personal server rather than Gfycat.
 - [ ] If upload fails, store image and queue upload at different time.
 - [ ] For the overlay, change the startX, endX, startY, and endY variables

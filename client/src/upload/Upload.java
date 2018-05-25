@@ -139,11 +139,13 @@ public class Upload {
             return "";
         }
 
-        if (obj.getBoolean("success")) {
+        if (obj != null && obj.getBoolean("success")) {
             return obj.getString("output");
         } else {
-            JOptionPane.showMessageDialog(null, "The server responded with:\n" +
-                    obj.getString("error"));
+            if (obj != null) {
+                JOptionPane.showMessageDialog(null, "The server responded with:\n" +
+                        obj.getString("error"));
+            }
 
             return "";
         }

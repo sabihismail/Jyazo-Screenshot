@@ -1,7 +1,8 @@
 package tray;
 
-import captureGIF.CaptureGIF;
-import captureImage.CaptureImage;
+import capture.CaptureScreen;
+import capture.captureGIF.CaptureGIF;
+import capture.captureImage.CaptureImage;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -89,7 +90,7 @@ public class GlobalKeyListener implements NativeKeyListener {
                 }
 
                 if (areAllTrue(allOuterBooleans)) {
-                    CaptureImage.createInstance(settings, config);
+                    CaptureScreen.createInstance(new CaptureImage(settings, config));
                 }
             }
         }
@@ -115,14 +116,14 @@ public class GlobalKeyListener implements NativeKeyListener {
                 }
 
                 if (areAllTrue(allOuterBooleans)) {
-                    CaptureGIF.createInstance();
+                    CaptureScreen.createInstance(new CaptureGIF(settings, config));
                 }
             }
         }
 
         if (settings.isEnablePrintScreen()) {
             if (keyEvent.getKeyCode() == NativeKeyEvent.VC_PRINTSCREEN) {
-                CaptureImage.createInstance(settings, config);
+                CaptureScreen.createInstance(new CaptureImage(settings, config));
             }
         }
     }
@@ -140,9 +141,7 @@ public class GlobalKeyListener implements NativeKeyListener {
             key = "Shift";
         }
 
-        if (keys.contains(key)) {
-            keys.remove(key);
-        }
+        keys.remove(key);
     }
 
     public void nativeKeyTyped(NativeKeyEvent e) {

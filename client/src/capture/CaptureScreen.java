@@ -1,4 +1,4 @@
-package captureImage;
+package capture;
 
 import javafx.application.Platform;
 import javafx.scene.Cursor;
@@ -12,17 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import settings.Config;
-import settings.Settings;
-import upload.Upload;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * This class allows for the capturing of a section of the screen through the
@@ -31,9 +24,9 @@ import java.io.IOException;
  * The screen capture region start is selected upon pressing down on the mouse and the end of the capture is wherever
  * the user releases the mouse. The image is then uploaded to the desired server.
  *
- * @since 1.0
+ * @since 1.1
  */
-public class CaptureImage {
+public class CaptureScreen {
     private Stage stage;
     private GraphicsContext gc;
     private int width, height;
@@ -43,20 +36,15 @@ public class CaptureImage {
     private boolean mouseReleased = false;
     private double startX, startY, endX, endY, selectionWidth, selectionHeight;
 
-    private Settings settings;
-    private Config config;
+    private Callback callback;
 
     /**
      * Creates an overlay that allows for a visible screen capture region for any image using the mouse.
      *
-     * @param settings This contains the user settings that is passed in from {@link #createInstance(Settings, Config)}.
-     * @param config   This contains the encrypted configuration data that is passed in from
-     *                 {@link #createInstance(Settings, Config)}.
-     * @param bounds   Bounds of the specified window.
+     * @param bounds Bounds of the specified window.
      */
-    private CaptureImage(Settings settings, Config config, Rectangle bounds) {
-        this.settings = settings;
-        this.config = config;
+    private CaptureScreen(Callback callback, Rectangle bounds) {
+        this.callback = callback;
 
         this.width = (int) bounds.getWidth();
         this.height = (int) bounds.getHeight();
@@ -66,6 +54,9 @@ public class CaptureImage {
 
     /**
      * Creates {@link Canvas} and enables drawing of capture region.
+     *
+     * On mouse release, execute the {@link Callback#onRelease(Stage, Rectangle)} function based on the parameter passed
+     * into the constructor {@link #callback}.
      */
     private void generateScene() {
         stage = new Stage();
@@ -81,17 +72,17 @@ public class CaptureImage {
         Pane root = new Pane();
         root.getChildren().add(canvas);
 
-        Scene fxScene = new Scene(root);
-        fxScene.setFill(Color.TRANSPARENT);
-        fxScene.setCursor(Cursor.CROSSHAIR);
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        scene.setCursor(Cursor.CROSSHAIR);
 
-        fxScene.setOnKeyPressed(e -> {
+        scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
                 stage.close();
             }
         });
 
-        fxScene.setOnMouseDragged(e -> {
+        scene.setOnMouseDragged(e -> {
             if (mousePressed && !mouseDragged)
                 mouseDragged = true;
 
@@ -105,7 +96,7 @@ public class CaptureImage {
             }
         });
 
-        fxScene.setOnMousePressed(e -> {
+        scene.setOnMousePressed(e -> {
             if (!mousePressed && !mouseReleased) {
                 mousePressed = true;
                 startX = e.getSceneX();
@@ -113,76 +104,40 @@ public class CaptureImage {
             }
         });
 
-        fxScene.setOnMouseReleased(e -> {
+        scene.setOnMouseReleased(e -> {
             if (mouseDragged && mousePressed && !mouseReleased) {
                 mouseReleased = true;
 
                 Platform.runLater(() -> gc.clearRect(0, 0, width, height));
 
-                new Thread(this::saveImageAndUpload).start();
+                double minX = 0, minY = 0;
+                if (startX < endX && startY < endY) {
+                    minX = startX;
+                    minY = startY;
+                    gc.clearRect(startX, startY, selectionWidth, selectionHeight);
+                } else if (startX < endX && endY < startY) {
+                    minX = startX;
+                    minY = endY;
+                    gc.clearRect(startX, endY, selectionWidth, selectionHeight);
+                } else if (endX < startX && endY < startY) {
+                    minX = endX;
+                    minY = endY;
+                    gc.clearRect(endX, endY, selectionWidth, selectionHeight);
+                } else if (endX < startX && startY < endY) {
+                    minX = endX;
+                    minY = startY;
+                    gc.clearRect(endX, startY, selectionWidth, selectionHeight);
+                }
+
+                Rectangle selection = new Rectangle((int) minX, (int) minY, (int) selectionWidth, (int) selectionHeight);
+
+                new Thread(() -> this.callback.onRelease(stage, selection)).start();
             }
         });
 
-        stage.setScene(fxScene);
+        stage.setScene(scene);
 
         stage.showAndWait();
-    }
-
-    /**
-     * Saves image based on {@link #startX}, {@link #startY}, {@link #endX}, and {@link #endY} values which store the
-     * information about the screen capture region size. These co-ordinates will be used to create a
-     * {@link Rectangle} which will be passed into {@link Robot#createScreenCapture(Rectangle)} which will return a
-     * {@link BufferedImage} of that region of the screeen.
-     * <p>
-     * If {@link Settings#saveAllImages} is {@code true}, the image will be stored in the directory located at
-     * {@link Settings#saveDirectory}.
-     * <p>
-     * The image will then be uploaded to the url at {@link Config#server} and the {@link CaptureImage} instance will
-     * be disposed using {@link Stage#close()}.
-     */
-    private void saveImageAndUpload() {
-        double minX = 0, minY = 0;
-        if (startX < endX && startY < endY) {
-            minX = startX;
-            minY = startY;
-            gc.clearRect(startX, startY, selectionWidth, selectionHeight);
-        } else if (startX < endX && endY < startY) {
-            minX = startX;
-            minY = endY;
-            gc.clearRect(startX, endY, selectionWidth, selectionHeight);
-        } else if (endX < startX && endY < startY) {
-            minX = endX;
-            minY = endY;
-            gc.clearRect(endX, endY, selectionWidth, selectionHeight);
-        } else if (endX < startX && startY < endY) {
-            minX = endX;
-            minY = startY;
-            gc.clearRect(endX, startY, selectionWidth, selectionHeight);
-        }
-
-        Rectangle screenRect = new Rectangle((int) minX, (int) minY, (int) selectionWidth, (int) selectionHeight);
-        BufferedImage screenCapture = null;
-        File tempFile = null;
-        try {
-            screenCapture = new Robot().createScreenCapture(screenRect);
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            tempFile = File.createTempFile("screenshot", ".png");
-            ImageIO.write(screenCapture, "png", tempFile);
-
-            if (settings.isSaveAllImages())
-                ImageIO.write(screenCapture, "png",
-                        new File(settings.getSaveDirectory() + Long.toString(System.currentTimeMillis()) + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Upload.uploadFile(tempFile, settings, config);
-
-        Platform.runLater(() -> stage.close());
     }
 
     /**
@@ -245,25 +200,22 @@ public class CaptureImage {
     }
 
     /**
-     * Creates an instance of {@link CaptureImage}.
+     * Creates an instance of {@link CaptureScreen}.
      * <p>
-     * This method is used to maintain method naming consistency between the creation of {@link CaptureImage} and
-     * {@link captureGIF.CaptureGIF}.
-     *
+     * This method is used to maintain method naming consistency between the creation of {@link CaptureScreen} and
+     * {@link capture.captureGIF.CaptureGIF}.
+     * <p>
      * As of 1.1, also calculates the size of the screen based on the amount of monitors on the client.
-     *  @param settings This contains the user settings that is passed in from {@link tray.CreateTrayIcon} and is
-     *                 immediately passed into {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
-     * @param config   This contains the encrypted configuration data that is passed in from
-     *                 {@link tray.CreateTrayIcon} and is immediately passed into
-     *                 {@link CaptureImage#CaptureImage(Settings, Config, Rectangle)}.
+     *
+     * @param callback The implementation function that runs after the mouse is released on screen capture.
      */
-    public static void createInstance(Settings settings, Config config) {
+    public static void createInstance(Callback callback) {
         int w = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         int h = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
         Rectangle bounds = new Rectangle(w, h);
 
-        new CaptureImage(settings, config, bounds);
+        new CaptureScreen(callback, bounds);
         /*
         int x = 0;
         int y = 0;
@@ -283,9 +235,5 @@ public class CaptureImage {
 
         new CaptureImage(settings, config, new Rectangle(x, y, width, height));
         */
-    }
-
-    public static void main(String[] args) {
-        createInstance(new Settings(), new Config());
     }
 }

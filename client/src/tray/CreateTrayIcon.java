@@ -1,7 +1,8 @@
 package tray;
 
-import captureGIF.CaptureGIF;
-import captureImage.CaptureImage;
+import capture.CaptureScreen;
+import capture.captureGIF.CaptureGIF;
+import capture.captureImage.CaptureImage;
 import captureSettings.CaptureSettings;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -26,7 +27,7 @@ import java.util.TimerTask;
  * <p>
  * This class is a JavaFX {@link Application} with {@link java.awt} package utilities like {@link TrayIcon} and
  * {@link JFrame}. This class will have a JavaFX thread continuously running even though the {@link CaptureImage} and
- * {@link captureGIF.CaptureGIF} are both {@link JFrame}. This is due to the {@link CaptureSettings} class which
+ * {@link capture.captureGIF.CaptureGIF} are both {@link JFrame}. This is due to the {@link CaptureSettings} class which
  * opens a JavaFX {@link Stage}.
  *
  * @since 1.0
@@ -104,8 +105,8 @@ public class CreateTrayIcon extends Application {
         SystemTray tray = SystemTray.getSystemTray();
         tray.add(icon);
 
-        captureImage.addActionListener(e -> CaptureImage.createInstance(settingsClass, config));
-        captureGIF.addActionListener(e -> CaptureGIF.createInstance());
+        captureImage.addActionListener(e -> CaptureScreen.createInstance(new CaptureImage(settingsClass, config)));
+        captureGIF.addActionListener(e -> CaptureScreen.createInstance(new CaptureGIF(settingsClass, config)));
         viewAllImages.addActionListener(e -> {
             try {
                 Desktop.getDesktop().open(new File(settingsClass.getSaveDirectory()));
@@ -126,9 +127,8 @@ public class CreateTrayIcon extends Application {
      * JavaFX {@link Application} thread for use by {@link CaptureSettings}.
      *
      * @param stage The JavaFX stage which allows for the JavaFX thread to be created.
-     * @throws Exception Throws all exceptions just as {@link Application#start(Stage)} does.
      */
-    private void initializeJavaFX(Stage stage) throws Exception {
+    private void initializeJavaFX(Stage stage) {
         Platform.setImplicitExit(false);
         stage.initStyle(StageStyle.TRANSPARENT);
 
@@ -163,7 +163,7 @@ public class CreateTrayIcon extends Application {
             viewAllImages.setEnabled(settingsClass.isSaveAllImages());
 
             if (e.getButton() == MouseEvent.BUTTON1) {
-                CaptureImage.createInstance(settingsClass, config);
+                CaptureScreen.createInstance(new CaptureImage(settingsClass, config));
             }
         }
 
