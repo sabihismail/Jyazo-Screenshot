@@ -141,31 +141,19 @@ public class Settings {
         try {
             mySettings.load(new FileInputStream(settingsFile));
 
-            enableGIF = mySettings.getProperty("enableGIF") != null &&
-                    Boolean.parseBoolean(mySettings.getProperty("enableGIF"));
-            keys = mySettings.getProperty("keyCodes") != null ? getListFromString(mySettings.getProperty("keyCodes")) : keys;
-            keys2 = mySettings.getProperty("keyCodes2") != null ?
-                    getListFromString(mySettings.getProperty("keyCodes2")) : keys2;
-            keyCodes = mySettings.getProperty("keyCodes") != null ?
-                    stringToKeyCodes(mySettings.getProperty("keyCodes")) : keyCodes;
-            keyCodes2 = mySettings.getProperty("keyCodes2") != null ?
-                    stringToKeyCodes(mySettings.getProperty("keyCodes2")) : keyCodes2;
-            saveAllImages = mySettings.getProperty("saveAllImages") != null ?
-                    Boolean.parseBoolean(mySettings.getProperty("saveAllImages")) : saveAllImages;
-            saveDirectory = mySettings.getProperty("saveDirectory") != null ?
-                    mySettings.getProperty("saveDirectory") : saveDirectory;
-            enableImageShortcut = mySettings.getProperty("enableImageShortcut") != null ?
-                    Boolean.parseBoolean(mySettings.getProperty("enableImageShortcut")) : enableImageShortcut;
-            enableGIFShortcut = mySettings.getProperty("enableGIFShortcut") != null ?
-                    Boolean.parseBoolean(mySettings.getProperty("enableGIFShortcut")) : enableGIFShortcut;
-            captureImageShortcut = mySettings.getProperty("keyCodes") != null ?
-                    mySettings.getProperty("keyCodes") : captureImageShortcut;
-            captureGIFShortcut = mySettings.getProperty("keyCodes2") != null ?
-                    mySettings.getProperty("keyCodes2") : captureGIFShortcut;
-            enablePrintScreen = mySettings.getProperty("enablePrintScreen") != null ?
-                    Boolean.parseBoolean(mySettings.getProperty("enablePrintScreen")) : enablePrintScreen;
-            enableSound = mySettings.getProperty("enableSound") != null ?
-                    Boolean.parseBoolean(mySettings.getProperty("enableSound")) : enableSound;
+            enableGIF = getBooleanProperty("enableGIF", enableGIF);
+            keys = getListStringProperty("keyCodes", keys);
+            keys2 = getListFromString("keyCodes2", keys2);
+            keyCodes = getKeyCodeProperty("keyCodes", keyCodes);
+            keyCodes2 = getKeyCodeProperty("keyCodes2", keyCodes2);
+            saveAllImages = getBooleanProperty("saveAllImages", saveAllImages);
+            saveDirectory = getProperty("saveDirectory", saveDirectory);
+            enableImageShortcut = getBooleanProperty("enableImageShortcut", enableImageShortcut);
+            enableGIFShortcut = getBooleanProperty("enableGIFShortcut", enableGIFShortcut);
+            captureImageShortcut = getProperty("keyCodes", captureImageShortcut);
+            captureGIFShortcut = getProperty("keyCodes2", captureGIFShortcut);
+            enablePrintScreen = getBooleanProperty("enablePrintScreen", enablePrintScreen);
+            enableSound = getBooleanProperty("enableSound", enableSound);
 
             new File(saveDirectory).mkdirs();
         } catch (IOException e) {
@@ -180,7 +168,25 @@ public class Settings {
                     keyCodes2, enablePrintScreen, enableSound);
         }
     }
-
+	
+	private String getProperty(String property, String currentValue){
+		return mySettings.getProperty(property) == null ? currentValue : mySettings.getProperty(property);
+	}
+	
+	private boolean getBooleanProperty(String property, String currentValue){
+		return mySettings.getProperty(property) == null ? currentValue : Boolean.parseBoolean(mySettings.getProperty(property)); 
+	}
+	
+	private List<String> getListStringProperty(String property, List<String> currentValue){
+		return mySettings.getProperty(property) == null ? keys : getListFromString(mySettings.getProperty(property));
+	}
+	
+	private List<KeyCode> getKeyCodeProperty(String property, List<KeyCode> currentValue){
+		return mySettings.getProperty(property) == null ? currentValue : stringToKeyCodes(mySettings.getProperty(property));
+	}
+	private 
+	
+	private 
     /**
      * Converts a given {@link String} key combination into a {@link List} of {@link KeyCode} objects.
      *
