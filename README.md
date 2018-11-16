@@ -8,7 +8,7 @@ code for the client-sided program is located in the client folder.
 
 ## Getting Started
 ### Server Side
-In the `upload_image.php` script, you will need to change the global
+In the `settings.php` script, you will need to change the global
 variables at the top of the script.
 
 Change the `HOST`, `USERNAME`, `PASSWORD`, `DATABASE`, and `TABLE_NAME`
@@ -21,12 +21,22 @@ the script, you **MUST** change the folder name as well. You will also
 have to change the `/ss/` in the .htaccess on this line:
 `RewriteRule ^(.*)$ /ss/index.php?path=$1 [NC,L,QSA]`.
 
-For the `UPLOAD_PASSWORD` and `SALT`, it is recommended you
-[generate a random password](https://passwordsgenerator.net/).
+For the `UPLOAD_PASSWORD`, `SALT`, and `ACCESS_PASSWORD` it is 
+recommended you [generate a random password](https://passwordsgenerator.net/).
+
+`UPLOAD_PASSWORD` is the password required for the screenshot to be uploaded.
+This should be also set in the client side to validate that the image is being
+uploaded from an authorized source.
+
+`SALT` is the salt for generating the hash for the image URL.
+
+`ACCESS_PASSWORD` is the password for being able to access the php page `ss/all.php'.
+To access this page and view all your images, you should go to the URL as shown: 
+`http://website.com/ss/all.php?p=ACCESS_PASSWORD`.
 
 ### Client Side
 The client itself allows for uploading to any url host that accepts an
-image with the POST name `uploaded_image`.
+image with the POST key `uploaded_image`.
 
 #### Manually Compile (skip to `No Compile` if you will download the JAR files instead)
 
@@ -49,7 +59,7 @@ Open the JAR. An icon should appear in the tray. Right click this
 icon and click `Settings`. Click `Advanced Settings` and then input
 the URL of where your `upload_image.php` script or equivalent direct 
 URL is located. The server password below should match the global 
-variable `UPLOAD_PASSWORD` in the `upload_image.php` file.
+variable `UPLOAD_PASSWORD` in the `settings.php` file.
 
 ## TODO (in no particular order):
 - [x] Create a more efficient GIF capture.
@@ -74,6 +84,8 @@ value.
 - [ ] Look for an alternative method to store the salt.
 - [ ] Add an "include title" checkbox option in the settings.
 - [ ] Add more exceptions to the logging.
+- [ ] Move the uploaded_image.php api to the ss/api.php page.
+- [ ] Potentially rewrite an an alternative language.
 
 ## Attributions
 * Tray Icon Image (Name: Share Screen) by Chinnaking from the Noun 
