@@ -143,7 +143,7 @@ public class Settings {
 
             enableGIF = getBooleanProperty("enableGIF", enableGIF);
             keys = getListStringProperty("keyCodes", keys);
-            keys2 = getListFromString("keyCodes2", keys2);
+            keys2 = getListStringProperty("keyCodes2", keys2);
             keyCodes = getKeyCodeProperty("keyCodes", keyCodes);
             keyCodes2 = getKeyCodeProperty("keyCodes2", keyCodes2);
             saveAllImages = getBooleanProperty("saveAllImages", saveAllImages);
@@ -168,25 +168,23 @@ public class Settings {
                     keyCodes2, enablePrintScreen, enableSound);
         }
     }
-	
+
 	private String getProperty(String property, String currentValue){
 		return mySettings.getProperty(property) == null ? currentValue : mySettings.getProperty(property);
 	}
-	
-	private boolean getBooleanProperty(String property, String currentValue){
-		return mySettings.getProperty(property) == null ? currentValue : Boolean.parseBoolean(mySettings.getProperty(property)); 
+
+	private boolean getBooleanProperty(String property, boolean currentValue){
+		return mySettings.getProperty(property) == null ? currentValue : Boolean.parseBoolean(mySettings.getProperty(property));
 	}
-	
+
 	private List<String> getListStringProperty(String property, List<String> currentValue){
-		return mySettings.getProperty(property) == null ? keys : getListFromString(mySettings.getProperty(property));
+		return mySettings.getProperty(property) == null ? currentValue : getListFromString(mySettings.getProperty(property));
 	}
-	
+
 	private List<KeyCode> getKeyCodeProperty(String property, List<KeyCode> currentValue){
 		return mySettings.getProperty(property) == null ? currentValue : stringToKeyCodes(mySettings.getProperty(property));
 	}
-	private 
-	
-	private 
+
     /**
      * Converts a given {@link String} key combination into a {@link List} of {@link KeyCode} objects.
      *
