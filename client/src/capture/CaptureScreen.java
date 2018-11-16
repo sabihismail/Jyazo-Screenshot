@@ -70,6 +70,7 @@ public class CaptureScreen {
         drawShapes();
 
         Pane root = new Pane();
+        root.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
         root.getChildren().add(canvas);
 
         Scene scene = new Scene(root);

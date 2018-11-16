@@ -41,14 +41,17 @@ public class TrayIconAWT extends TrayIcon {
 
     /**
      * Upon mouse pressed and mouse released, show the tray menu.
+     *
+     * Modified {@link #showMenu(MouseEvent)} function call by only calling on right click.
      */
     private class TrayIconMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent mouseEvent) {
-            showMenu(mouseEvent);
         }
 
         public void mouseReleased(MouseEvent mouseEvent) {
-            showMenu(mouseEvent);
+            if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+                showMenu(mouseEvent);
+            }
         }
 
         /**

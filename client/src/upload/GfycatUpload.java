@@ -35,6 +35,7 @@ public class GfycatUpload {
     private static String API_ENDPOINT_GET_STATUS = API_ENDPOINT + "gfycats/fetch/status/";
 
     private static String URL_START = "https://gfycat.com/";
+    // private static String API_ENDPOINT_GET_INFORMATION = API_ENDPOINT + "gfycats/";
 
     private Config config;
 
@@ -183,7 +184,7 @@ public class GfycatUpload {
 
                 BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
                 while ((inputLine = r.readLine()) != null)
                     response.append(inputLine);
                 r.close();

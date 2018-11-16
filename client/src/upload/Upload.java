@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -101,23 +102,27 @@ public class Upload {
     private static String uploadToServer(File imageFile, Config config) {
         JSONObject obj = null;
         try {
+            Header[] headers;
+            if (config.getServerPassword() == null || config.getServerPassword().equals("")) {
+                headers = new Header[2];
+            } else {
+                headers = new Header[3];
+
+                headers[2] = new BasicHeader("uploadpassword", config.getServerPassword());
+            }
+
+            String boundary = "-------------" + System.currentTimeMillis();
+            headers[0] = new BasicHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+            headers[1] = new BasicHeader("title", WindowInformation.ACTIVE_WINDOW);
+
             ContentType contentType = ContentType.create(Files.probeContentType(Paths.get(imageFile.getAbsolutePath())));
 
             HttpClient httpClient = HttpClients.createMinimal();
             HttpEntity httpEntity = MultipartEntityBuilder.create()
                     .addBinaryBody("uploaded_image", imageFile, contentType, imageFile.getName())
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .setBoundary(boundary)
                     .build();
-
-            Header[] headers;
-            if (config.getServerPassword() == null || config.getServerPassword().equals("")) {
-                headers = new Header[1];
-            } else {
-                headers = new Header[2];
-
-                headers[1] = new BasicHeader("uploadpassword", config.getServerPassword());
-            }
-
-            headers[0] = new BasicHeader("title", WindowInformation.ACTIVE_WINDOW);
 
             HttpPost httpRequest = new HttpPost(config.getServer());
             httpRequest.setHeaders(headers);

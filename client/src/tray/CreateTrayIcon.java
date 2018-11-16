@@ -100,7 +100,37 @@ public class CreateTrayIcon extends Application {
         Image iconImage = tempImage.getScaledInstance(tempWidth, -1, Image.SCALE_SMOOTH);
 
         TrayIconAWT icon = new TrayIconAWT(iconImage, popup);
-        icon.addMouseListener(new IconClickListener());
+        icon.addMouseListener(new MouseListener() {
+            /**
+             * Listener for when {@link TrayIconAWT} is clicked. By default, clicking the {@link TrayIconAWT} will open
+             * the {@link JFrame} for regular image screenshot.
+             */
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                captureGIF.setEnabled(settingsClass.isEnableGIF());
+                viewAllImages.setEnabled(settingsClass.isSaveAllImages());
+
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    CaptureScreen.createInstance(new CaptureImage(settingsClass, config));
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
 
         SystemTray tray = SystemTray.getSystemTray();
         tray.add(icon);
@@ -150,37 +180,5 @@ public class CreateTrayIcon extends Application {
         }
 
         Application.launch();
-    }
-
-    /**
-     * Listener for when {@link TrayIconAWT} is clicked. By default, clicking the {@link TrayIconAWT} will open the
-     * {@link JFrame} for regular image screenshot.
-     */
-    private class IconClickListener implements MouseListener {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            captureGIF.setEnabled(settingsClass.isEnableGIF());
-            viewAllImages.setEnabled(settingsClass.isSaveAllImages());
-
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                CaptureScreen.createInstance(new CaptureImage(settingsClass, config));
-            }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-        }
     }
 }
