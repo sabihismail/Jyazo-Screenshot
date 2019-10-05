@@ -217,24 +217,6 @@ public class CaptureScreen {
         Rectangle bounds = new Rectangle(w, h);
 
         new CaptureScreen(callback, bounds);
-        /*
-        int x = 0;
-        int y = 0;
-        int width = 0;
-        int height = 0;
 
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for (GraphicsDevice device : ge.getScreenDevices()) {
-            Rectangle bounds = device.getDefaultConfiguration().getBounds();
-
-            width += bounds.getWidth();
-            height += bounds.getWidth();
-
-            x = (int) Math.min(x, bounds.getX());
-            y = (int) Math.min(y, bounds.getY());
-        }
-
-        new CaptureImage(settings, config, new Rectangle(x, y, width, height));
-        */
     }
 }
